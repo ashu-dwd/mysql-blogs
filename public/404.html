@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Page Not Found | Your Blog Name</title>
+    <style>
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      body {
+        font-family: "Georgia", serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #333;
+      }
+
+      .container {
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 40px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        width: 90%;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 72px;
+        margin: 0;
+        color: #2c3e50;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      h2 {
+        font-size: 24px;
+        margin-top: 0;
+        color: #34495e;
+      }
+
+      p {
+        font-size: 18px;
+        line-height: 1.6;
+        color: #7f8c8d;
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: #3498db;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 4px;
+        font-size: 18px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        margin-top: 20px;
+      }
+
+      .btn:hover {
+        background-color: #2980b9;
+        transform: scale(1.05);
+      }
+
+      .svg-container {
+        margin: 30px 0;
+        animation: fadeIn 1s ease-out;
+      }
+
+      .pencil {
+        animation: float 4s ease-in-out infinite;
+      }
+
+      #randomPost {
+        margin-top: 30px;
+        padding: 20px;
+        background-color: #ecf0f1;
+        border-radius: 8px;
+        display: none;
+      }
+
+      #randomPost h3 {
+        margin-top: 0;
+        color: #2c3e50;
+      }
+
+      #randomPost p {
+        font-size: 16px;
+        color: #34495e;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>404</h1>
+      <h2>Oops! Page Not Found</h2>
+      <div class="svg-container">
+        <svg
+          width="200"
+          height="200"
+          viewBox="0 0 200 200"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect x="40" y="40" width="120" height="160" rx="10" fill="#ecf0f1" />
+          <rect x="60" y="60" width="80" height="10" rx="5" fill="#bdc3c7" />
+          <rect x="60" y="80" width="80" height="10" rx="5" fill="#bdc3c7" />
+          <rect x="60" y="100" width="60" height="10" rx="5" fill="#bdc3c7" />
+          <g class="pencil">
+            <rect
+              x="100"
+              y="20"
+              width="10"
+              height="140"
+              rx="5"
+              transform="rotate(45 100 20)"
+              fill="#e74c3c"
+            />
+            <polygon points="85,5 115,35 100,50 70,20" fill="#f39c12" />
+          </g>
+        </svg>
+      </div>
+      <p>
+        The blog post you're looking for seems to have wandered off. It might
+        have been removed, renamed, or is temporarily unavailable.
+      </p>
+      <a href="/" class="btn">Return to Homepage</a>
+      <button
+        onclick="showRandomPost()"
+        class="btn"
+        style="background-color: #2ecc71"
+      >
+        Read a Random Post
+      </button>
+      <div id="randomPost"></div>
+    </div>
+
+    <script>
+      const posts = [
+        {
+          title: "10 Tips for Better Blog Writing",
+          excerpt:
+            "Improve your blog writing skills with these ten essential tips. Learn how to engage your readers and create compelling content.",
+        },
+        {
+          title: "The Future of Blogging in 2024",
+          excerpt:
+            "Explore the emerging trends and technologies shaping the future of blogging. Stay ahead of the curve and adapt your blog for success.",
+        },
+        {
+          title: "How to Grow Your Blog Audience",
+          excerpt:
+            "Discover effective strategies to increase your blog's readership. From SEO techniques to social media promotion, we've got you covered.",
+        },
+      ];
+
+      function showRandomPost() {
+        const randomPost = posts[Math.floor(Math.random() * posts.length)];
+        const postElement = document.getElementById("randomPost");
+        postElement.innerHTML = `
+                <h3>${randomPost.title}</h3>
+                <p>${randomPost.excerpt}</p>
+                <a href="#" class="btn" style="background-color: #9b59b6;">Read Full Post</a>
+            `;
+        postElement.style.display = "block";
+        postElement.style.animation = "fadeIn 0.5s ease-out";
+      }
+    </script>
+  </body>
+</html>

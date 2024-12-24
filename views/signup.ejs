@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Sign Up</title>
+    <%- include('./partials/meta') %>
+  </head>
+  <%- include('./partials/nav') %>
+  <body class="bg-light">
+    <% if (locals.message) { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+
+      <strong><%= locals.message %></strong>
+    </div>
+    <% } %>
+    <div class="container">
+      <div class="row justify-content-center min-vh-100 align-items-center">
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card shadow">
+            <div class="card-body p-5">
+              <h2 class="text-center mb-4">Create Account</h2>
+              <form
+                method="post"
+                action="/user/signup"
+                enctype="multipart/form-data"
+              >
+                <div class="mb-3">
+                  <label for="fullName" class="form-label">Full Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="name"
+                    id="fullName"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email address</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value="<%= locals.email  %>"
+                    class="form-control"
+                    id="email"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    class="form-control"
+                    id="password"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="confirmPassword" class="form-label"
+                    >Confirm Password</label
+                  >
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    class="form-control"
+                    id="confirmPassword"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="img" class="form-label"
+                    >Upload Profile Image</label
+                  >
+                  <input
+                    type="file"
+                    class="form-control"
+                    name="img"
+                    id="img"
+                    aria-describedby="helpId"
+                    placeholder=""
+                  />
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                  Sign Up
+                </button>
+              </form>
+              <p class="text-center mt-3">
+                Already have an account? <a href="/user/login">Login</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include('./partials/script') %>
+    <script></script>
+    
+  </body>
+</html>

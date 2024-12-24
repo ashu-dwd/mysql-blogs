@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Login</title>
+    <%- include('./partials/meta') %>
+  </head>
+  <%- include('./partials/nav') %>
+  <body class="bg-light">
+    <% if (locals.error) { %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+
+      <strong>Error!</strong> <%= locals.error %>
+    </div>
+
+    <% }else if(locals.msg){ %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+
+      <strong>Yayyy!</strong> <%= locals.msg %>
+    </div>
+
+    <% } %>
+    <div class="container">
+      <div class="row justify-content-center min-vh-100 align-items-center">
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card shadow">
+            <div class="card-body p-5">
+              <h2 class="text-center mb-4">Login</h2>
+              <form method="post" action="/user/login">
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email address</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    name="password"
+                    id="password"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                  Login
+                </button>
+              </form>
+              <p class="text-center mt-3">
+                Don't have an account? <a href="/user/signup">Sign Up</a>
+              </p>
+              <p class="text-center">
+                <a href="#" class="text-decoration-none">Forgot password?</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include('./partials/script') %>
+  </body>
+</html>

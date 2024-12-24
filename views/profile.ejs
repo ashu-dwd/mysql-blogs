@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>User Profile</title>
+    <%- include('./partials/meta') %>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .profile-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+      .profile-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      .profile-image-container {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+        cursor: pointer;
+      }
+      .profile-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .camera-icon-overlay {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .camera-icon-overlay i {
+        color: white;
+        font-size: 2rem;
+      }
+      .profile-image-container:hover .camera-icon-overlay {
+        opacity: 1;
+      }
+      .form-label {
+        font-weight: 600;
+        color: #495057;
+      }
+      .input-group-text {
+        background-color: #f8f9fa;
+      }
+      body {
+        background-color: #f0f2f5;
+      }
+      #imageInput {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header><%- include('./partials/nav') %></header>
+    <% if (locals.userInfo && Array.isArray(locals.userInfo)) { %> <%
+    userInfo.forEach(element => { %>
+    <main>
+      <form
+        action="/user/updateUser/<% element.user_id %>"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <div class="container profile-container">
+          <div class="profile-header">
+            <div
+              class="profile-image-container"
+              onclick="document.getElementById('imageInput').click()"
+            >
+              <img
+                src="/profilePics/<%= element.profilePic %>"
+                alt="Profile Picture"
+                class="profile-image mb-3"
+                id="profileImg"
+              />
+              <% if(locals.sameUser == true){ %>
+              <div class="camera-icon-overlay">
+                <i class="fas fa-camera"></i>
+              </div>
+              <%}%>
+            </div>
+            <% if(locals.sameUser == true){ %>
+            <input
+              type="file"
+              id="imageInput"
+              name="img"
+              accept="image/*"
+              hidden
+            /><%}%>
+            <h2 class="mb-0">User Profile</h2>
+            <% if(locals.sameUser == true){ %>
+            <p class="text-muted">Manage your personal information</p>
+            <%}%>
+          </div>
+
+          <div class="mb-4">
+            <label for="name" class="form-label">Full Name</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-user"></i>
+              </span>
+              <input
+                disabled
+                type="text"
+                value="<%= element.full_name %>"
+                class="form-control"
+                id="name"
+                name="name"
+                placeholder="Enter your full name"
+              />
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="email" class="form-label">Email Address</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-envelope"></i>
+              </span>
+              <input
+                disabled
+                type="email"
+                value="<%= element.email %>"
+                class="form-control"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+              />
+            </div>
+          </div>
+
+          <% if(locals.sameUser == true){ %>
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button type="button" id="edit" class="btn btn-success me-md-2">
+              Edit
+            </button>
+            <button
+              type="submit"
+              id="update"
+              hidden
+              class="btn btn-primary me-md-2"
+            >
+              Update
+            </button>
+            <a
+              name="delete"
+              id="delete"
+              class="btn btn-danger"
+              href="/user/deleteAccount/<%= element.id %>"
+              role="button"
+              >Delete Your Account</a
+            >
+          </div>
+          <%}%>
+        </div>
+      </form>
+    </main>
+    <% }) %> <% } else { %>
+    <p>No user information available.</p>
+    <% } %>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+      $("#edit").click(function (e) {
+        e.preventDefault();
+        $("input").removeAttr("disabled");
+        $("#update").removeAttr("hidden");
+        $("#edit").hide();
+      });
+
+      // Preview image before upload
+      document.getElementById("imageInput").onchange = function (e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            document.getElementById("profileImg").src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+    </script>
+  </body>
+</html>

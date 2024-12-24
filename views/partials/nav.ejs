@@ -1,0 +1,105 @@
+<nav class="navbar navbar-expand-lg shadow-sm">
+  <div class="container">
+    <!-- Brand -->
+    <a class="navbar-brand fw-bold fs-4" href="/">Blogify</a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarContent"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <% if (locals.user) { %>
+        <!-- Write Blogs Section -->
+        <div class="nav-section me-4">
+          <li class="nav-item">
+            <a class="nav-link px-3" href="/blogs">Start Writing Blogs</a>
+          </li>
+        </div>
+        <!-- user's space -->
+        <div class="nav-section me-4">
+          <li class="nav-item">
+            <a class="nav-link px-3" href="/user/space">Your Space</a>
+          </li>
+        </div>
+        <!-- User Section -->
+        <div class="nav-section">
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle px-3"
+              href="#"
+              id="userDropdown"
+              data-bs-toggle="dropdown"
+            >
+              <%= user.name %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <a class="dropdown-item" href="/user/<%= user.id %>"
+                  >Profile</a
+                >
+              </li>
+              <li><a class="dropdown-item" href="/user/logout">Log Out</a></li>
+            </ul>
+          </li>
+        </div>
+        <% }else{ %>
+        <!-- Auth Section -->
+        <div class="nav-section me-4">
+          <li class="nav-item">
+            <a class="nav-link px-3" href="/user/signup">Create Account</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3" href="/user/login">Sign In</a>
+          </li>
+        </div>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<style>
+  .navbar {
+    background-color: #f0f5ff;
+    padding: 1rem 0;
+  }
+
+  .navbar-brand {
+    color: #2d4ed8 !important;
+  }
+
+  .nav-section {
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #e5e7eb;
+    padding-right: 1rem;
+  }
+
+  .nav-section:last-child {
+    border-right: none;
+  }
+
+  .nav-link {
+    color: #4b5563 !important;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .nav-link:hover {
+    color: #2d4ed8 !important;
+  }
+
+  @media (max-width: 992px) {
+    .nav-section {
+      border-right: none;
+      padding-right: 0;
+      flex-direction: column;
+    }
+  }
+</style>

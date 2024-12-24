@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create New Blog Post</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor5/41.1.0/ckeditor.min.js"></script>
+    <style>
+      /* AI Button Styles */
+      .ai-float-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 24px;
+        background-color: #0d6efd;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        z-index: 1050;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .ai-float-btn:hover {
+        background-color: #0b5ed7;
+      }
+
+      /* Modal Styles */
+      .ai-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1060;
+      }
+
+      .ai-modal-content {
+        position: relative;
+        background-color: #fff;
+        width: 90%;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .ai-modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #6c757d;
+      }
+
+      .ai-form-group {
+        margin-bottom: 1rem;
+      }
+
+      .ai-form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+
+      .ai-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .ai-btn {
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        border: 1px solid transparent;
+      }
+
+      .ai-btn-primary {
+        background-color: #0d6efd;
+        color: white;
+      }
+
+      .ai-btn-secondary {
+        background-color: #6c757d;
+        color: white;
+      }
+
+      .ai-spinner {
+        display: none;
+        margin-left: 8px;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #0d6efd;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Additional Custom Styles */
+      .ck-editor__editable {
+        min-height: 300px;
+      }
+
+      .image-preview-wrapper {
+        max-height: 300px;
+        overflow: hidden;
+        border-radius: 8px;
+        margin-top: 10px;
+      }
+
+      .custom-file-label::after {
+        content: "Browse";
+      }
+
+      .card {
+        border: none;
+        transition: box-shadow 0.3s ease;
+      }
+
+      .card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-primary {
+        padding: 12px 24px;
+      }
+    </style>
+  </head>
+  <body class="bg-light">
+    <%- include('./partials/nav') %>
+    <!-- AI Float Button -->
+    <button class="ai-float-btn" id="aiButton">
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+        ></path>
+      </svg>
+      Generate Blog
+    </button>
+
+    <!-- AI Modal -->
+    <div class="ai-modal" id="aiModal">
+      <div class="ai-modal-content">
+        <span class="ai-modal-close" id="closeModal">&times;</span>
+        <h3 style="margin-top: 0">Generate Blog Content with AI</h3>
+
+        <div class="ai-form-group">
+          <label for="aiTitle">Blog Title</label>
+          <input
+            type="text"
+            id="aiTitle"
+            class="form-control"
+            placeholder="Enter your blog title"
+          />
+        </div>
+
+        <div class="ai-form-group">
+          <label for="aiDescription">Brief Description</label>
+          <textarea
+            id="aiDescription"
+            class="form-control"
+            rows="4"
+            placeholder="What should your blog be about?"
+          ></textarea>
+        </div>
+
+        <div class="ai-modal-footer">
+          <button class="ai-btn ai-btn-secondary" id="cancelButton">
+            Cancel
+          </button>
+          <button class="ai-btn ai-btn-primary" id="generateButton">
+            Generate Content
+            <div class="ai-spinner" id="generateSpinner"></div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+          <div class="card shadow-sm">
+            <div class="card-body p-4">
+              <h2 class="text-center mb-4">Create New Blog Post</h2>
+
+              <form
+                action="/blogs/upload"
+                method="POST"
+                enctype="multipart/form-data"
+              >
+                <!-- Title -->
+                <div class="mb-4">
+                  <label for="title" class="form-label">Title</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="title"
+                    name="title"
+                    required
+                    placeholder="Enter blog title"
+                  />
+                </div>
+
+                <!-- Description -->
+                <div class="mb-4">
+                  <label for="desc" class="form-label">Description</label>
+                  <textarea
+                    class="form-control"
+                    id="desc"
+                    name="desc"
+                    rows="3"
+                    required
+                    placeholder="Enter a brief description of your blog post"
+                  ></textarea>
+                </div>
+
+                <!-- Content -->
+                <div class="mb-4">
+                  <label for="content" class="form-label">Content</label>
+                  <div id="editor"></div>
+                  <input type="hidden" name="content" id="content" />
+                </div>
+
+                <!-- Cover Image -->
+                <div class="mb-4">
+                  <label for="coverImage" class="form-label">Cover Image</label>
+                  <div class="input-group">
+                    <input
+                      type="file"
+                      class="form-control"
+                      id="coverImage"
+                      name="coverImage"
+                      accept="image/*"
+                    />
+                  </div>
+                  <div class="form-text">
+                    Leave empty to use default cover image
+                  </div>
+                </div>
+
+                <!-- Preview Image -->
+                <div class="mb-4 d-none" id="imagePreview">
+                  <label class="form-label">Image Preview</label>
+                  <div class="image-preview-wrapper">
+                    <img src="" alt="Preview" class="img-fluid rounded" />
+                  </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary btn-lg">
+                    Publish Blog Post
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary">
+                    Save as Draft
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Initialize CKEditor
+      ClassicEditor.create(document.querySelector("#editor"), {
+        toolbar: [
+          "heading",
+          "|",
+          "bold",
+          "italic",
+          "link",
+          "bulletedList",
+          "numberedList",
+          "|",
+          "imageUpload",
+          "blockQuote",
+          "insertTable",
+          "undo",
+          "redo",
+        ],
+      })
+        .then((editor) => {
+          // Store editor instance
+          window.editor = editor;
+
+          // Update hidden input before form submission
+          document
+            .querySelector("form")
+            .addEventListener("submit", function () {
+              document.querySelector("#content").value = editor.getData();
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+      // Image preview functionality
+      document
+        .getElementById("coverImage")
+        .addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              const preview = document.getElementById("imagePreview");
+              preview.classList.remove("d-none");
+              preview.querySelector("img").src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+
+      // AI Modal Functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const aiButton = document.getElementById("aiButton");
+        const aiModal = document.getElementById("aiModal");
+        const closeModal = document.getElementById("closeModal");
+        const cancelButton = document.getElementById("cancelButton");
+        const generateButton = document.getElementById("generateButton");
+        const generateSpinner = document.getElementById("generateSpinner");
+
+        // Open modal
+        aiButton.addEventListener("click", () => {
+          aiModal.style.display = "block";
+        });
+
+        // Close modal
+        function closeAiModal() {
+          aiModal.style.display = "none";
+          document.getElementById("aiTitle").value = "";
+          document.getElementById("aiDescription").value = "";
+        }
+
+        closeModal.addEventListener("click", closeAiModal);
+        cancelButton.addEventListener("click", closeAiModal);
+
+        // Close modal when clicking outside
+        window.addEventListener("click", (e) => {
+          if (e.target === aiModal) {
+            closeAiModal();
+          }
+        });
+
+        $("#generateButton").click(async function (e) {
+          e.preventDefault();
+
+          const title = $("#aiTitle").val();
+          const description = $("#aiDescription").val();
+          $("#title").val(title);
+          $("#desc").val(description);
+
+          if (!title || !description) {
+            alert("Please fill in both title and description");
+            return;
+          }
+
+          // Show loading state
+          $("#generateButton").prop("disabled", true);
+          $("#generateSpinner").css("display", "inline-block");
+
+          try {
+            // Send POST request to the server using Fetch API
+            const content = { title, description };
+            console.log(content);
+            fetch("/generate-blog", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(content),
+            })
+              .then((response) => {
+                const decoder = new TextDecoder();
+                const reader = response.body.getReader();
+
+                let result = "";
+
+                // Continuously read content from the server as it streams in
+                const processChunk = ({ value, done }) => {
+                  if (done) {
+                    console.log("Streaming completed.");
+                    return;
+                  }
+
+                  const chunk = decoder.decode(value, { stream: true });
+                  result += chunk;
+
+                  console.log("Received chunk:", chunk);
+
+                  // Clean up the HTML content
+                  const cleanedText = result
+                    .replace(/```html/g, "")
+                    .replace(/```/g, "")
+                    .trim();
+
+                  // Update CKEditor content dynamically
+                  if (window.editor) {
+                    window.editor.setData(`
+              <div>${cleanedText}</div>
+            `);
+                  }
+
+                  // Also update a response HTML element if needed
+                  $("#ai-response").html(cleanedText);
+
+                  reader.read().then(processChunk);
+                };
+
+                reader.read().then(processChunk);
+              })
+              .catch((error) => {
+                console.error("Error while streaming content:", error);
+                alert("An error occurred while generating content.");
+              });
+          } catch (error) {
+            console.error("Request failed", error);
+            alert("Content generation failed.");
+          } finally {
+            // Hide loading spinner and re-enable the button
+            $("#generateButton").prop("disabled", false);
+            $("#generateSpinner").css("display", "none");
+
+            // Close the modal after content generation is complete
+            closeAiModal();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

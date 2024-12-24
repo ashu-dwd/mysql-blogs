@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blogify - Home</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #8c53ef;
+        --secondary-color: #f5f5f7;
+        --accent-color: #97c9cf;
+        --text-color: #1a1a1a;
+        --light-purple: rgba(142, 68, 236, 0.1);
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        color: var(--text-color);
+        background-color: #ffffff;
+      }
+
+      .navbar {
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+      }
+
+      .hero-section {
+        background: linear-gradient(
+          135deg,
+          var(--light-purple),
+          var(--secondary-color)
+        );
+        padding: 6rem 0;
+      }
+
+      .blog-card {
+        border: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .blog-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      }
+
+      .blog-card .card-img-top {
+        height: 200px;
+        object-fit: cover;
+      }
+
+      .blog-card .card-body {
+        padding: 1.5rem;
+      }
+
+      .blog-card .card-title {
+        color: var(--primary-color);
+        font-weight: 600;
+      }
+
+      .tag {
+        background-color: var(--light-purple);
+        color: var(--primary-color);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        display: inline-block;
+        margin: 0.25rem;
+      }
+
+      .search-bar {
+        border-radius: 30px;
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--secondary-color);
+        transition: border-color 0.2s;
+      }
+
+      .search-bar:focus {
+        border-color: var(--accent-color);
+        box-shadow: none;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 30px;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--accent-color);
+      }
+
+      .pagination .page-link {
+        color: var(--primary-color);
+        border: none;
+        padding: 0.75rem 1rem;
+        margin: 0 0.25rem;
+        border-radius: 8px;
+      }
+
+      .pagination .page-link:hover {
+        background-color: var(--light-purple);
+      }
+
+      .pagination .active .page-link {
+        background-color: var(--primary-color);
+      }
+
+      .author-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+      }
+
+      .blog-meta {
+        font-size: 0.875rem;
+        color: #666;
+      }
+
+      @media (max-width: 768px) {
+        .hero-section {
+          padding: 4rem 0;
+        }
+
+        .blog-card .card-img-top {
+          height: 160px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('./partials/nav') %>
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-8 text-center">
+            <h1 class="display-4 mb-4">Discover Insights</h1>
+            <p class="lead mb-4">
+              Explore thought-provoking articles on technology, AI, and
+              innovation.
+            </p>
+            <div class="input-group mb-3">
+              <input
+                type="text"
+                class="form-control search-bar"
+                placeholder="Search articles..."
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Blog Posts Grid -->
+    <div class="container py-5">
+      <!-- Featured Post -->
+      <div class="row mb-5">
+        <div class="col-12">
+          <div class="card blog-card">
+            <div class="row g-0">
+              <div class="col-md-6">
+                <img
+                  src="/blog.jpg"
+                  class="img-fluid h-100 w-100 object-fit-cover"
+                  alt="Featured post"
+                />
+              </div>
+              <div class="col-md-6">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-center mb-3">
+                    <span class="tag">Featured</span>
+                  </div>
+                  <h2 class="card-title h3">
+                    The Future of Artificial Intelligence
+                  </h2>
+                  <p class="card-text">
+                    Explore the latest developments in AI and how they're
+                    shaping our future. From machine learning breakthroughs to
+                    ethical considerations, dive deep into the world of
+                    artificial intelligence.
+                  </p>
+                  <div class="d-flex align-items-center mb-3">
+                    <img src="/avatar.jpg" alt="Author" class="author-avatar" />
+                    <div class="blog-meta">
+                      <div>Sarah Johnson</div>
+                      <div>Dec 5, 2024 · 8 min read</div>
+                    </div>
+                  </div>
+                  <a href="#" class="btn btn-primary">Read More</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Regular Posts Grid -->
+      <% if (locals.blogs && locals.blogs.length > 0) { %>
+      <div class="row">
+        <% locals.blogs.forEach(blog => { %>
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card blog-card h-100">
+            <img
+              src="/coverImages/<%= blog.coverImage %>"
+              class="card-img-top"
+              alt="Blog post"
+            />
+            <div class="card-body">
+              <div class="d-flex gap-2 mb-3">
+                <% if (blog.tags) { %> <% blog.tags.forEach(tag => { %>
+                <span class="tag"><%= tag %></span>
+                <% }) %> <% } %>
+              </div>
+
+              <h3 class="card-title h5"><%= blog.title %></h3>
+              <p class="card-text"><%= blog.desc %></p>
+              <a
+                href="/user/<%= blog.authorName.id %>"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div class="d-flex align-items-center mt-3">
+                  <img
+                    src="/profilePics/<%= blog.profilePic %>"
+                    alt="Author"
+                    class="author-avatar"
+                  />
+                  <div class="blog-meta">
+                    <div><%= blog.full_name %></div>
+                    </a>
+                    <div><%= blog.createdAt %></div>
+                  </div>
+                </div>
+
+              <a href="/blogs/<%= blog.blog_id %>" class="btn btn-primary mt-2"
+                >Read More</a
+              >
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <% } else { %>
+      <p class="text-center mt-5">No blogs found. Please try again later.</p>
+      <% } %>
+
+      <!-- Pagination -->
+      <nav class="mt-5">
+        <ul class="pagination justify-content-center">
+          <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+          <li class="page-item active"><a class="page-link" href="">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
