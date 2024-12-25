@@ -38,6 +38,14 @@ app.use(
 );
 
 app.use(
+  "/css",
+  express.static(path.join(__dirname, "public/css"))
+);
+app.use(
+  "/js",
+  express.static(path.join(__dirname, "public/js"))
+);
+app.use(
   "/profilePics",
   express.static(path.join(__dirname, "public/profilePics"))
 );

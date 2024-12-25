@@ -1,4 +1,5 @@
 const {createBlog, getBlogById} = require("../models/blog");
+const { updateLikeSet } = require("../models/blog_likes");
 const User = require("../models/user");
 const handleBlogUploading = async (req, res) => {
   try {
@@ -35,21 +36,29 @@ const handleBlogSearchById = async (req, res) => {
     if (!blog) {
       return res.status(404).send("Blog not found");
     }
-    // try {
-    //   const user = await User.findById(blog.author);
-    //   blog.authorName = user; // Attach author details to the blog
-    // } catch (err) {
-    //   console.error(`User not found for author ID: ${blog.author}`);
-    //   blog.authorName = null;
-    // }
-    res.render("blog", { blog: blog, user: req.user });
+    //req.user.blog_id = blogId;
+    res.render("blog", { blog, user: req.user });
   } catch (error) {
     console.error("Error fetching blog:", error.message);
     res.status(500).send("Internal Server Error");
   }
 };
 
+const handleBlogLikes = async (req, res) => {
+  const blogId = req.body.blog_id;
+  const userId = req.user.id;
+  const result = await updateLikeSet(blogId, userId);
+  if (result === "already liked") {
+    res.json("You have already liked this blog");
+  } else {
+    res.json("liked");
+  }
+}
+
+
+
 module.exports = {
   handleBlogUploading,
   handleBlogSearchById,
+  handleBlogLikes
 };

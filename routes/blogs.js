@@ -1,8 +1,11 @@
 const express = require("express");
-const { handleBlogUploading, handleBlogSearchById } = require("../controllers/blog");
+
+const { handleBlogUploading, handleBlogSearchById , handleBlogLikes} = require("../controllers/blog");
 const Router = express.Router();
 const multer = require("multer");
 const path = require("path");
+const handlingLimitedAccessToUser = require("../middlewares/cookiechecker");
+const Route = require("./home");
 
 // Set up storage configuration
 const storage = multer.diskStorage({
@@ -27,11 +30,12 @@ const upload = multer({
   },
 });
 
-Router.get("/", (req, res) => res.render("blogEditor", { user: req.user }));
+Router.get("/",handlingLimitedAccessToUser, (req, res) => res.render("blogEditor", { user: req.user }));
 
 // Correct the syntax for single image upload
-Router.post("/upload", upload.single("coverImage"), handleBlogUploading);
+Router.post("/upload",handlingLimitedAccessToUser, upload.single("coverImage"), handleBlogUploading);
 
 Router.get('/:id', handleBlogSearchById);
+Route.post('/like', handleBlogLikes);
 
 module.exports = Router;
