@@ -8,7 +8,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const generateSummary = async (req, res) => {
   try {
-    const prompt = `${req.body.content}. Please provide a summary of the blog/article in HTML format, adhering to the following requirements:
+    const prompt = `${req.body.content}. Please provide a  summary of the blog/article in HTML format, adhering to the following requirements:
 Do not include <head> or <body> tags.
 Use <div> and <p>  elements or ul-li or whatever you want for structure.
 Incorporate Bootstrap classes for styling.

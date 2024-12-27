@@ -1,6 +1,5 @@
 const express = require("express");
-
-const { handleBlogUploading, handleBlogSearchById , handleBlogLikes} = require("../controllers/blog");
+const { handleBlogUploading, handleBlogSearchById , handleBlogLikes,handleUserComments} = require("../controllers/blog");
 const Router = express.Router();
 const multer = require("multer");
 const path = require("path");
@@ -37,5 +36,6 @@ Router.post("/upload",handlingLimitedAccessToUser, upload.single("coverImage"), 
 
 Router.get('/:id', handleBlogSearchById);
 Route.post('/like', handleBlogLikes);
+Route.post('/comment', handleUserComments);
 
 module.exports = Router;

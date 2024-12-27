@@ -229,6 +229,7 @@
       <% if (locals.blog && Array.isArray(locals.blog) && locals.blog.length > 0) { %>
         <% const blog = locals.blog[0]; %> <!-- Get the first blog if it's an array -->
         <main id="main-content">
+          <div class="username" hidden><%= locals.user.name %></div>
           <div class="hero-section" style="background-image: url('/coverImages/<%= blog.coverImage %>');" role="banner" aria-label="Blog post hero image">
             <div class="hero-title">
               <h1 id="blog-title"><%= blog.title %></h1>
@@ -256,6 +257,7 @@
                       </a>
                       <br />
                       <strong>Written at:</strong> <%= blog.created_at %>
+
                     </p>
                   </div>
                 </div>
@@ -270,9 +272,10 @@
               <i class="fa fa-thumbs-up" aria-hidden="true"></i> Like
             </button>
             <span id="like-count" class="text-dark"><%= blog.total_likes %></span>
+            <div id="msg"></div>
           </div>
           <div class="col-md-4">
-            <button class="btn btn-secondary" id="comment-btn" data-bs-toggle="collapse" data-bs-target="#comment-section">
+            <button class="btn btn-secondary"  data-bs-toggle="collapse" data-bs-target="#comment-section">
               <i class="fa fa-comment" aria-hidden="true"></i> Comment
             </button>
             <span id="comment-count" class="text-dark"><%= blog.total_comments %></span>
@@ -288,10 +291,24 @@
             <div class="form-group">
               <textarea class="form-control" id="comment" rows="3"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Post Comment</button>
+            <button type="button" id="comment-btn" class="btn btn-primary">Post Comment</button>
           </form>
           <div id="comment-list" class="mt-4">
-            <!-- Comment list will be displayed here -->
+            <ul class="list-group">
+              
+              <% if (parsedComments && Array.isArray(parsedComments) && parsedComments.length > 0) { %>
+                <% parsedComments[0].forEach(comment => { %>
+                  <li class="list-group-item">
+                    <strong><%- comment.username %></strong> <%= comment.comment %> 
+                    <span class="text-muted">(<%= comment.commented_at %>)</span>
+                  </li>
+                <% }); %>
+              <% } else { %>
+                <li class="list-group-item text-muted">No comments yet.</li>
+              <% } %>
+            </ul>
+            
+            
           </div>
         </div>
       </div>
@@ -409,7 +426,6 @@
     const segments = url.split('/');
     return segments.pop() || segments.pop(); // Handle trailing slash case
   }
-
   // Example usage
   const url = window.location.href;
   e.preventDefault();
@@ -420,9 +436,51 @@
       blog_id : getBlogId(url) // Pass the URL to the function
     },
     success: function (response) {
-      console.log(response)
+      //console.log(response)
+      if (response === "error") {
+        $("#msg").text("Already Liked!😁")
+      }else{
+        $("#like-count").text(parseInt($("#like-count").text()) + 1);
+      }
     }
   });
+});
+$('#comment-btn').click(function (e) { 
+  function getBlogId(url) {
+    // Split the URL by "/" and get the last element
+    const segments = url.split('/');
+    return segments.pop() || segments.pop(); // Handle trailing slash case
+  }
+  // Example usage
+  const url = window.location.href;
+  e.preventDefault();
+  const comment = $('#comment').val();
+  if(comment === ''){
+    $("#msg").text("Comment can't be empty!😞")
+  }else{
+  $.ajax({
+    type: "post",
+    url: `/comment`,
+    data: {
+      blog_id : getBlogId(url), 
+      comment : comment
+    },
+    success: function (response) {
+      console.log(response)
+      if (response === "error") {
+        $("#msg").text("Failed to post comment!😞")
+      }else{
+        const username = $(".username").text().trim();
+        $("#comment-count").text(parseInt($("#comment-count").text()) + 1);
+        $('.list-group').append(`<li class="list-group-item">
+                    <strong>${username}</strong> ${comment} 
+                    <span class="text-muted">(<%= new Date().toLocaleString() %>)</span>
+                  </li>`);
+        $('#comment').val('');
+      }
+    }
+  });
+}
 });
           
         });
