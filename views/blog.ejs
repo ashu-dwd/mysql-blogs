@@ -229,7 +229,10 @@
       <% if (locals.blog && Array.isArray(locals.blog) && locals.blog.length > 0) { %>
         <% const blog = locals.blog[0]; %> <!-- Get the first blog if it's an array -->
         <main id="main-content">
-          <div class="username" hidden><%= locals.user.name %></div>
+          <% if(locals.user) { %>
+            <div class="username" hidden><%= locals.user.name %></div>
+          <% } %>
+          
           <div class="hero-section" style="background-image: url('/coverImages/<%= blog.coverImage %>');" role="banner" aria-label="Blog post hero image">
             <div class="hero-title">
               <h1 id="blog-title"><%= blog.title %></h1>
@@ -262,59 +265,86 @@
                   </div>
                 </div>
               </aside>
-             <div class="row">
-  <div class="col-lg-8">
-    <div class="card mt-4">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-4">
-            <button class="btn btn-light" id="like-btn">
-              <i class="fa fa-thumbs-up" aria-hidden="true"></i> Like
-            </button>
-            <span id="like-count" class="text-dark"><%= blog.total_likes %></span>
-            <div id="msg"></div>
-          </div>
-          <div class="col-md-4">
-            <button class="btn btn-secondary"  data-bs-toggle="collapse" data-bs-target="#comment-section">
-              <i class="fa fa-comment" aria-hidden="true"></i> Comment
-            </button>
-            <span id="comment-count" class="text-dark"><%= blog.total_comments %></span>
-          </div>
-          <div class="col-md-4">
-            <button class="btn btn-success" id="share-btn">
-              <i class="fa fa-share-alt" aria-hidden="true"></i> Share
-            </button>
-          </div>
-        </div>
-        <div id="comment-section" class="collapse mt-4">
-          <form>
-            <div class="form-group">
-              <textarea class="form-control" id="comment" rows="3"></textarea>
-            </div>
-            <button type="button" id="comment-btn" class="btn btn-primary">Post Comment</button>
-          </form>
-          <div id="comment-list" class="mt-4">
-            <ul class="list-group">
-              
-              <% if (parsedComments && Array.isArray(parsedComments) && parsedComments.length > 0) { %>
-                <% parsedComments[0].forEach(comment => { %>
-                  <li class="list-group-item">
-                    <strong><%- comment.username %></strong> <%= comment.comment %> 
-                    <span class="text-muted">(<%= comment.commented_at %>)</span>
-                  </li>
-                <% }); %>
-              <% } else { %>
-                <li class="list-group-item text-muted">No comments yet.</li>
+              <% if (locals.user) { %>
+                <div class="row">
+                  <div class="col-lg-8">
+                    <div class="card mt-4">
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-md-4">
+                            <button class="btn btn-light" id="like-btn">
+                              <i class="fa fa-thumbs-up" aria-hidden="true"></i> Like
+                            </button>
+                            <span id="like-count" class="text-dark"><%= blog.total_likes %></span>
+                            <div id="msg"></div>
+                          </div>
+                          <div class="col-md-4">
+                            <button class="btn btn-secondary"  data-bs-toggle="collapse" data-bs-target="#comment-section">
+                              <i class="fa fa-comment" aria-hidden="true"></i> Comment
+                            </button>
+                            <span id="comment-count" class="text-dark"><%= blog.total_comments %></span>
+                          </div>
+                          <div class="col-md-4">
+                            <button class="btn btn-success" id="share-btn" data-bs-toggle="modal" data-bs-target="#shareModal">
+                              <i class="fa fa-share-alt" aria-hidden="true"></i> Share
+                            </button>
+                          
+                            <!-- Bootstrap Modal -->
+                            <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalTitle" aria-hidden="true">
+                              <div class="modal-dialog modal-lg custom-modal-width">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="shareModalTitle">Share This Post</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <p>Share this post with others:</p>
+                                    <!-- Input field to display and copy the link -->
+                                    <input type="text" id="share-link" class="form-control" readonly>
+                                    <button class="btn btn-primary mt-3" id="copy-link-btn">Copy Link</button>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          
+                          </div>
+                        </div>
+                        <div id="comment-section" class="collapse mt-4">
+                          <form>
+                            <div class="form-group">
+                              <textarea class="form-control" id="comment" rows="3"></textarea>
+                            </div>
+                            <button type="button" id="comment-btn" class="btn btn-primary">Post Comment</button>
+                          </form>
+                          <div id="comment-list" class="mt-4">
+                            <ul class="list-group">
+                              <% if (parsedComments[0] && Array.isArray(parsedComments[0]) && parsedComments[0].length > 0) { %>
+                                <% parsedComments[0].forEach(comment => { %>
+                                  <li class="list-group-item">
+                                    <strong><%- comment?.username || '' %></strong> <%= comment?.comment || 'No comment provided' %>
+                                    <span class="text-muted">(<%= comment?.commented_at || '' %>)</span>
+                                  </li>
+                                <% }); %>
+                              <% } else { %>
+                                <li class="list-group-item text-muted">No comments yet.</li>
+                              <% } %>
+                            </ul>
+                            
+                            
+                            
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               <% } %>
-            </ul>
-            
-            
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+             
             </div>
           </div>
         </main>
@@ -400,6 +430,7 @@
 
     <!-- Bootstrap and jQuery Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
       integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
@@ -417,6 +448,34 @@
       referrerpolicy="no-referrer"
     ></script>
     <script>
+      document.addEventListener("DOMContentLoaded", function () {
+  // Set the link in the input field when the modal is opened
+  const shareButton = document.getElementById("share-btn");
+  const shareLinkInput = document.getElementById("share-link");
+
+  shareButton.addEventListener("click", function () {
+    const currentLink = window.location.href; // Get the current URL
+    console.log(currentLink)
+    shareLinkInput.value = currentLink;       // Set the URL in the input field
+  });
+
+  // Copy the link to the clipboard
+  const copyLinkButton = document.getElementById("copy-link-btn");
+
+  copyLinkButton.addEventListener("click", function () {
+    shareLinkInput.select(); // Select the text in the input field
+    shareLinkInput.setSelectionRange(0, 99999); // For mobile devices
+
+    navigator.clipboard.writeText(shareLinkInput.value) // Use Clipboard API to copy
+      .then(() => {
+        alert("Link copied to clipboard!");
+      })
+      .catch(err => {
+        alert("Failed to copy link: " + err);
+      });
+  });
+});
+
       $(document).ready(function () {
         console.log("Document ready!");
         
