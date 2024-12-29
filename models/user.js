@@ -22,9 +22,15 @@ const updateUser = async (id, user) => {
 };
 
 const deleteUser = async (id) => {
-  const results = await pool.query('DELETE FROM users WHERE user_id = ?', id);
-  return results.affectedRows;
+  try {
+    const [results] = await pool.query('DELETE FROM users WHERE user_id = ?', [id]);
+    return results.affectedRows;
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw error;
+  }
 };
+
 
 module.exports = {
   getAllUsers,

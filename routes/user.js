@@ -1,5 +1,5 @@
 const express = require("express");
-const {getUserById} = require("../models/user");
+const { getUserById } = require("../models/user");
 const Blog = require("../models/blog");
 const bycrypt = require("bcrypt");
 const Route = express.Router();
@@ -10,6 +10,7 @@ const {
   displayUserSpace,
   sendOtp,
   verifyOtp,
+  deleteUserAccount,
 } = require("../controllers/user");
 const multer = require("multer");
 const path = require("path");
@@ -59,7 +60,7 @@ Route.get("/:id", async (req, res) => {
     const user = await getUserById(userId);
 
     console.log(user);
-  
+
 
     if (!user) {
       return res.status(404).send("User not found");
@@ -73,7 +74,7 @@ Route.get("/:id", async (req, res) => {
       userInfo: user,
       user: req.user,
       sameUser: sameUser,
-  
+
     });
   } catch (err) {
     console.error(err);
@@ -81,5 +82,6 @@ Route.get("/:id", async (req, res) => {
   }
 });
 //Route.post('/sendOtp', handleUser)
-
+Route.get('/deleteAccount/:id', (req, res) => res.render("deletePage", { user: req.user }));
+Route.post('/deleteAccount/:id', deleteUserAccount);
 module.exports = Route;

@@ -1,4 +1,4 @@
-const {createBlog, getBlogById} = require("../models/blog");
+const { createBlog, getBlogById } = require("../models/blog");
 const insertUserComments = require("../models/blog_comments");
 const { updateLikeSet } = require("../models/blog_likes");
 const User = require("../models/user");
@@ -11,13 +11,13 @@ const handleBlogUploading = async (req, res) => {
 
     // Save only the image filename to the database
     const coverImageName = coverImage ? coverImage.filename : null;
-      const blog = {
-        title:title,
-        desc:desc,
-        content:content,
-        coverImage: coverImageName, // Save only the filename
-        authorId: req.user.id,
-      }
+    const blog = {
+      title: title,
+      desc: desc,
+      content: content,
+      coverImage: coverImageName, // Save only the filename
+      authorId: req.user.id,
+    }
     const result = await createBlog(blog);
 
     console.log("Blog entry created:", result[0]);
@@ -43,7 +43,7 @@ const handleBlogSearchById = async (req, res) => {
     blog.forEach((blog) => {
       // Parse the comments
       parsedComments.push(JSON.parse(`[${blog.comments}]`));
-      
+
     });
     console.log(parsedComments)
     //console.log(blog.comments); 
@@ -59,18 +59,18 @@ const handleBlogLikes = async (req, res) => {
   const blogId = req.body.blog_id;
   const userId = req.user.id;
   try {
-  const result = await updateLikeSet(blogId, userId);
-  console.log(result)
-  if (result) {
-    res.json("You have already liked this blog");
-  } else {
-    res.json("liked");
+    const result = await updateLikeSet(blogId, userId);
+    console.log(result)
+    if (result) {
+      res.json("You have already liked this blog");
+    } else {
+      res.json("liked");
+    }
   }
-}
-catch(error){
-  //console.error("Error updating like set:", error.message);
-  res.json("error")
-}
+  catch (error) {
+    //console.error("Error updating like set:", error.message);
+    res.json("error")
+  }
 }
 const handleUserComments = async (req, res) => {
   const { blog_id, comment } = req.body;

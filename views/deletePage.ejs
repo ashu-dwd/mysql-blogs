@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/meta') %>
+    <title>Delete Account | Blogify</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+      /* Delete Account specific variables */
+      :root {
+        --delete-danger: #dc3545;
+        --delete-danger-hover: #c82333;
+        --delete-gray-100: #f8f9fa;
+        --delete-gray-200: #e9ecef;
+        --delete-gray-700: #495057;
+        --delete-gray-800: #343a40;
+      }
+
+      /* Account deletion container specific styles */
+      .delete-account-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Warning icon specific to delete account */
+      .delete-warning-icon {
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 1.5rem;
+        display: block;
+        color: var(--delete-danger);
+      }
+
+      /* Delete account specific heading */
+      .delete-account-title {
+        color: var(--delete-danger);
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-size: 1.75rem;
+      }
+
+      /* Step containers */
+      .delete-step {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        border: 1px solid var(--delete-gray-200);
+        border-radius: 6px;
+        display: none;
+      }
+
+      .delete-step.active {
+        display: block;
+      }
+
+      /* Step header */
+      .delete-step-header {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--delete-gray-700);
+      }
+
+      /* Checkbox group specific to delete flow */
+      .delete-checkbox-group {
+        margin-bottom: 1rem;
+      }
+
+      .delete-checkbox-group label {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+      }
+
+      .delete-checkbox-group input[type="checkbox"] {
+        margin-top: 0.3rem;
+      }
+
+      /* Username confirmation input */
+      .delete-username-input {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--delete-gray-200);
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+
+      /* Delete specific button styles */
+      .delete-btn {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        text-align: center;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .delete-btn-danger {
+        background: var(--delete-danger);
+        color: white;
+      }
+
+      .delete-btn-danger:hover {
+        background: var(--delete-danger-hover);
+      }
+
+      .delete-btn-danger:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+      }
+
+      /* Error message specific to delete flow */
+      .delete-error-message {
+        color: var(--delete-danger);
+        margin-top: 0.5rem;
+        display: none;
+      }
+
+      /* Loading indicator for delete action */
+      .delete-loading {
+        display: none;
+        text-align: center;
+        margin-top: 1rem;
+      }
+
+      .delete-loading-spinner {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid var(--delete-gray-200);
+        border-top-color: var(--delete-danger);
+        border-radius: 50%;
+        animation: delete-spin 1s linear infinite;
+      }
+
+      @keyframes delete-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('./partials/nav.ejs') %>
+    <div class="container">
+      <div class="delete-account-container">
+        <svg
+          class="delete-warning-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
+        </svg>
+
+        <h1 class="delete-account-title">Delete Account</h1>
+
+        <div class="delete-step active" id="step1">
+          <div class="delete-step-header">
+            Step 1: Understand the consequences
+          </div>
+          <div class="delete-checkbox-group">
+            <label>
+              <input type="checkbox" class="understanding-checkbox" />
+              <span
+                >I understand that this action is permanent and cannot be
+                undone</span
+              >
+            </label>
+            <label>
+              <input type="checkbox" class="understanding-checkbox" />
+              <span
+                >I understand that all my data, projects, and settings will be
+                permanently deleted</span
+              >
+            </label>
+            <label>
+              <input type="checkbox" class="understanding-checkbox" />
+              <span
+                >I understand that I will lose access to all premium features
+                and subscriptions</span
+              >
+            </label>
+          </div>
+          <button class="delete-btn delete-btn-danger" id="step1Next" disabled>
+            Continue
+          </button>
+        </div>
+
+        <div class="delete-step" id="step2">
+          <div class="delete-step-header">Step 2: Confirm your identity</div>
+          <p>
+            Please type your username (<strong id="username">john_doe</strong>)
+            to confirm:
+          </p>
+          <input
+            type="text"
+            class="delete-username-input"
+            id="usernameConfirm"
+            placeholder="Enter your username"
+          />
+          <button class="delete-btn delete-btn-danger" id="step2Next" disabled>
+            Continue
+          </button>
+        </div>
+
+        <div class="delete-step" id="step3">
+          <div class="delete-step-header">Step 3: Final confirmation</div>
+          <p>
+            Are you absolutely sure you want to delete your account? This action
+            cannot be undone.
+          </p>
+          <button class="delete-btn delete-btn-danger" id="deleteAccount">
+            Yes, delete my account
+          </button>
+          <div class="delete-loading">
+            <div class="delete-loading-spinner"></div>
+            <p>Processing your request...</p>
+          </div>
+          <div class="delete-error-message">
+            An error occurred. Please try again later.
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include('./partials/script') %>
+    <script>
+      $(document).ready(function () {
+        // Step 1: Check understanding
+        $(".understanding-checkbox").on("change", function () {
+          const allChecked =
+            $(".understanding-checkbox:checked").length ===
+            $(".understanding-checkbox").length;
+          $("#step1Next").prop("disabled", !allChecked);
+        });
+
+        // Step 1 to 2
+        $("#step1Next").on("click", function () {
+          $("#step1").removeClass("active");
+          $("#step2").addClass("active");
+        });
+
+        // Step 2: Username confirmation
+        $("#usernameConfirm").on("input", function () {
+          const matches = $(this).val() === $("#username").text();
+          $("#step2Next").prop("disabled", !matches);
+        });
+
+        // Step 2 to 3
+        $("#step2Next").on("click", function () {
+          $("#step2").removeClass("active");
+          $("#step3").addClass("active");
+        });
+
+        // Final deletion request
+        $("#deleteAccount").on("click", function () {
+          const $btn = $(this);
+          const $loading = $(".loading");
+          const $error = $(".error-message");
+
+          // Disable button and show loading
+          $btn.prop("disabled", true);
+          $loading.show();
+          $error.hide();
+          const url = window.location.href;
+          // Simulate user_id (in real implementation, this would come from your auth system)
+          const user_id = getBlogId(url);
+          function getBlogId(url) {
+            // Split the URL by "/" and get the last element
+            const segments = url.split("/");
+            return segments.pop() || segments.pop(); // Handle trailing slash case
+          }
+
+          // Send deletion request
+          $.ajax({
+            url: "/user/deleteAccount/" + user_id,
+            method: "POST",
+            success: function (response) {
+              // Redirect to logout or confirmation page
+              window.location.href = "/account-deleted";
+            },
+            error: function (xhr, status, error) {
+              // Show error and reset button
+              $error.show();
+              $btn.prop("disabled", false);
+              $loading.hide();
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

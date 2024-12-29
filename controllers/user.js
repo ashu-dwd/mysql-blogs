@@ -1,7 +1,7 @@
-const {createUser, updateUser} = require("../models/user");
+const { createUser, updateUser, deleteUser } = require("../models/user");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
-const {pool} = require('../connect');
+const { pool } = require('../connect');
 const { createTokenForUser } = require("../services/auth");
 
 // Sending email using nodemailer
@@ -95,7 +95,7 @@ const verifyOtp = async (req, res) => {
       // Clear OTP and expiry after successful verification
       req.session.otp = null;
       req.session.otpExpiry = null;
-      
+
       const message = "OTP verified successfully";
       return res.redirect('/signup');
     } else {
@@ -196,6 +196,24 @@ const displayUserSpace = async (req, res) => {
   // Implement user space logic
 };
 
+const deleteUserAccount = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    console.log(userId)
+    const result = await deleteUser(userId);
+    console.log(result);
+    if (result > 0) {
+      res.status(200).json({ message: 'User deleted successfully.' });
+    } else {
+      res.status(404).json({ message: 'User not found.' });
+    }
+  } catch (error) {
+    console.error('Delete error:', error);
+    res.status(500).json({ message: 'An error occurred while deleting the user.', error: error.message });
+  }
+};
+
+
 module.exports = {
   handleUserSignUp,
   handleUserLogin,
@@ -203,4 +221,5 @@ module.exports = {
   displayUserSpace,
   sendOtp,
   verifyOtp,
+  deleteUserAccount
 };
