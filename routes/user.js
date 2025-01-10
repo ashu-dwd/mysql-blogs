@@ -58,10 +58,7 @@ Route.get("/:id", async (req, res) => {
   try {
     const userId = req.params.id;
     const user = await getUserById(userId);
-
-    console.log(user);
-
-
+    //console.log(user);
     if (!user) {
       return res.status(404).send("User not found");
     }

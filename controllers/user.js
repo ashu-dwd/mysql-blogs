@@ -1,7 +1,8 @@
-const { createUser, updateUser, deleteUser } = require("../models/user");
+const { createUser, updateUser, deleteUser, getUsersBlogs } = require("../models/user");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const { pool } = require('../connect');
+
 const { createTokenForUser } = require("../services/auth");
 
 // Sending email using nodemailer
@@ -20,17 +21,17 @@ async function sendMail(email, subject, message) {
   try {
     const info = await transporter.sendMail({
       from: '"Blogify" <dwivediji425@gmail.com>',
-      to: email, // Dynamic receiver email
+      to: email,
       subject: subject,
-      text: message, // OTP message
-      html: "", // Optional HTML content
+      text: message,
+      html: "",
     });
 
     console.log("Message sent: %s", info.messageId);
-    return true; // Indicating success
+    return true;
   } catch (error) {
     console.error("Error sending email:", error);
-    return false; // Return false on failure
+    return false;
   }
 }
 
@@ -194,7 +195,17 @@ const handleUserUpdatation = async (req, res) => {
 };
 
 const displayUserSpace = async (req, res) => {
-  // Implement user space logic
+  const userId = req.user.id;
+  try {
+    const result = await getUsersBlogs(userId);
+    const totalBlogs = result[0].length
+    console.log(totalBlogs);
+    res.render('userSpace', { user: req.user, blogs: result[0], totalBlogs });
+  } catch (error) {
+    throw new Error("Error fetching user blogs");
+  }
+
+
 };
 
 const deleteUserAccount = async (req, res) => {

@@ -30,6 +30,15 @@ const deleteUser = async (id) => {
     throw error;
   }
 };
+const getUsersBlogs = async (id) => {
+  try {
+    const results = await pool.query('SELECT * FROM users JOIN blogs ON users.user_id = blogs.authorId where users.user_id = ?', id);
+    return results;
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw error;
+  }
+}
 
 
 module.exports = {
@@ -37,5 +46,6 @@ module.exports = {
   getUserById,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  getUsersBlogs
 };

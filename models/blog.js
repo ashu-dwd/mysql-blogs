@@ -37,7 +37,7 @@ WHERE blogs.blog_id = ?
 GROUP BY blogs.blog_id, users.user_id;
 
     `, [id]);
-    
+
     return result[0];
   } catch (err) {
     throw err;
@@ -62,9 +62,9 @@ const updateBlog = async (id, blog) => {
   }
 };
 
-const deleteBlog = async (id) => {
+const deleteBlogById = async (id) => {
   try {
-    const result = await pool.query('DELETE FROM blogs WHERE id = ?', id);
+    const result = await pool.query('DELETE FROM blogs WHERE blog_id = ?', id);
     return result;
   } catch (err) {
     throw err;
@@ -76,5 +76,5 @@ module.exports = {
   getBlogById,
   createBlog,
   updateBlog,
-  deleteBlog
+  deleteBlogById
 };

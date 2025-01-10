@@ -11,16 +11,16 @@ const userRoute = require("./routes/user");
 const blogsRoute = require("./routes/blogs");
 const { checkAuthCookie } = require("./middlewares/auth");
 require("dotenv").config();
-const {conn} = require('./connect');
+const { conn } = require('./connect');
 
 //express session
 
 app.use(
   session({
-    secret: "your-secret-key", // Replace with your own secret key
+    secret: "Ashu@123@",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }, // Set to true if using HTTPS
+    cookie: { secure: false },
   })
 );
 

@@ -1,5 +1,5 @@
 const express = require("express");
-const { handleBlogUploading, handleBlogSearchById , handleBlogLikes,handleUserComments} = require("../controllers/blog");
+const { handleBlogUploading, handleBlogSearchById, handleBlogLikes, handleUserComments, deleteBlog } = require("../controllers/blog");
 const Router = express.Router();
 const multer = require("multer");
 const path = require("path");
@@ -29,13 +29,14 @@ const upload = multer({
   },
 });
 
-Router.get("/",handlingLimitedAccessToUser, (req, res) => res.render("blogEditor", { user: req.user }));
+Router.get("/", handlingLimitedAccessToUser, (req, res) => res.render("blogEditor", { user: req.user }));
 
 // Correct the syntax for single image upload
-Router.post("/upload",handlingLimitedAccessToUser, upload.single("coverImage"), handleBlogUploading);
+Router.post("/upload", handlingLimitedAccessToUser, upload.single("coverImage"), handleBlogUploading);
 
 Router.get('/:id', handleBlogSearchById);
 Route.post('/like', handleBlogLikes);
 Route.post('/comment', handleUserComments);
+Router.post('/delete', handlingLimitedAccessToUser, deleteBlog)
 
 module.exports = Router;

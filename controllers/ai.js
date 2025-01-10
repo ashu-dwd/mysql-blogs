@@ -28,7 +28,7 @@ Ensure that the summary is clear and concise, effectively conveying the main ide
     // Stream content to the client as it is generated
     for await (const chunk of result.stream) {
       const chunkText = chunk.text();
-      res.write(chunkText); // Continuously send the content to the client
+      res.write(chunkText);
     }
 
     res.end(); // Finish the response once all content is streamed

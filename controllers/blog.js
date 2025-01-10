@@ -1,4 +1,4 @@
-const { createBlog, getBlogById } = require("../models/blog");
+const { createBlog, getBlogById, deleteBlogById } = require("../models/blog");
 const insertUserComments = require("../models/blog_comments");
 const { updateLikeSet } = require("../models/blog_likes");
 const User = require("../models/user");
@@ -91,10 +91,23 @@ const handleUserComments = async (req, res) => {
   }
 };
 
+const deleteBlog = async (req, res) => {
+  const blogId = req.body.blogId;
+  try {
+    const result = await deleteBlogById(blogId);
+    console.log(result)
+    res.json("Blog deleted successfully");
+  } catch (error) {
+    console.error("Error deleting blog:", error.message);
+    res.status(500).send("Internal Server Error");
+  }
+}
+
 
 module.exports = {
   handleBlogUploading,
   handleBlogSearchById,
   handleBlogLikes,
-  handleUserComments
+  handleUserComments,
+  deleteBlog
 };
