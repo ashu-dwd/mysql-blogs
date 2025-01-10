@@ -136,7 +136,7 @@ const handleUserSignUp = async (req, res) => {
 const handleUserLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log({ email, password });
+    //console.log({ email, password });
 
     // Find the user by email
     const [rows] = await pool.promise().query('SELECT * FROM users WHERE email = ?', [email]);
@@ -176,6 +176,7 @@ const handleUserUpdatation = async (req, res) => {
     const userId = req.user.id;
     const { name, email } = req.body;
     const img = req.file ? req.file.filename : "user.png";
+    if (!req.user || !req.user.id) return res.status(404).json({ error: 'please login first' })
     const dataToBeUpdated = {
       full_name: name,
       email: email,
@@ -198,12 +199,13 @@ const displayUserSpace = async (req, res) => {
 
 const deleteUserAccount = async (req, res) => {
   try {
+    if (!req.user || !req.user.id) return res.status(404).json({ error: 'please login first' })
     const userId = req.params.id;
     console.log(userId)
     const result = await deleteUser(userId);
     console.log(result);
     if (result > 0) {
-      res.status(200).json({ message: 'User deleted successfully.' });
+      res.clearCookie("token").redirect('/?msg=deleted successfully')
     } else {
       res.status(404).json({ message: 'User not found.' });
     }

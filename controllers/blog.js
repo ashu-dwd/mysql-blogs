@@ -39,6 +39,7 @@ const handleBlogSearchById = async (req, res) => {
     if (!blog) {
       return res.status(404).send("Blog not found");
     }
+    console.log(blog)
     const parsedComments = [];
     blog.forEach((blog) => {
       // Parse the comments
